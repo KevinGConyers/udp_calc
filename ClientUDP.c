@@ -8,7 +8,6 @@
 #include <arpa/inet.h> 
 #include <netinet/in.h> 
 #include "ClientUDP.h"
-#include "EncodeDecode/RequestResponse.h"
   
 #define MAXLINE 1024 
   
@@ -19,11 +18,9 @@
 
 struct sockaddr_in si_other;
 int s;
-unsigned int slen=sizeof(si_other);
+int slen=sizeof(si_other);
 char buf[BUFLEN];
 char message[BUFLEN];
-
-int recvHeaderSize;
 
 void die(char *s)
 {
@@ -47,32 +44,11 @@ int setUp(int port, char const *address) {
 void sendAndRec(){
 	while(1)
 	{
-		char id = 0;	
-		struct Request * outGoingRequest = {'7', ++id, '0', '2', '-1', '-1'};
-		printf("Enter operation (+ - * /): ");
+		printf("Enter message : ");
 		fgets(message, BUFLEN, stdin);
-		char op = message[0];
-		printf("passed assignment\n");
-		switch(op) {
-			case '+' :
-				outGoingRequest->opCode = '0';
-				outGoingRequest->numOps = '2';
-				break;
-			default :
-				outGoingRequest->opCode = '-1';
-		}
-		printf("Enter operand one: ");
-		fgets(message, BUFLEN, stdin);
-		outGoingRequest->operand1 = atoi(message);
-		if (outGoingRequest->numOps > 1) {
-			printf("Enter operand two: ");
-			fgets(message, BUFLEN, stdin);
-			outGoingRequest->operand2 = atoi(message);
-
-		}
-
+		
 		//send the message
-		if (sendto(s, (struct Request*)&outGoingRequest, (1024+sizeof(outGoingRequest)), 0 , (struct sockaddr *) &si_other, slen)==-1)
+		if (sendto(s, message, strlen(message) , 0 , (struct sockaddr *) &si_other, slen)==-1)
 		{
 			die("sendto()");
 		}
