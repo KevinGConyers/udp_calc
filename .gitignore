@@ -1,0 +1,9 @@
+.vimrc
+CMakeFiles/
+*.txt
+Makefile
+cmake_install.cmake
+compile_commands.json
+bin/*
+src/*.in
+build/*
