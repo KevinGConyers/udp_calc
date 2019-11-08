@@ -8,27 +8,11 @@ using ::testing::Test;
 
 char expArray[8];
 char testArray[8];
-struct Request testReq;
 class EncoderTestSuit : public testing::Test
 {	
 
 	void setUp(){
-		testReq.TML = 7;
-		testReq.ReqID = 1;
-		testReq.opCode = 1;
-		testReq.numOps = 2;
-		testReq.operand1 = 1;
-		testReq.operand2 = 2;
-		expArray[0] = 7;
-		expArray[1] = 1;
-		expArray[2] = 1;
-		expArray[3] = 2;
-		expArray[4] = 0;
-		expArray[5] = 1;
-		expArray[6] = 0;
-		expArray[7] = 2;
-		std::cout << "Set Up";
-	}
+			}
 
 	void tearDown(){}
 
@@ -69,11 +53,4 @@ TEST_F(EncoderTestSuit, check_request_encoding) {
 
 }*/
 
-TEST_F(EncoderTestSuit, check_what_serialization_does) {
-	unsigned char * testBuffer;
-	testBuffer = serialize_int(testBuffer, 400);
-	for( int i = 0; i < 4; ++i) {
-		std::cout << "testBuffer at " << i << ": " << testBuffer[i];
-	}
 
-}

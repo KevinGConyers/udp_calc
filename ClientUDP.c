@@ -7,10 +7,13 @@
 #include <sys/socket.h> 
 #include <arpa/inet.h> 
 #include <netinet/in.h> 
+#include <limits.h>
 #include "ClientUDP.h"
-  
+#include "EncodeDecode/Encoder.c"
+#include "EncodeDecode/Decoder.c"
+
 #define MAXLINE 1024 
-  
+
 // Driver code 
 #define SERVER "127.0.0.1"
 #define BUFLEN 512	//Max length of buffer
@@ -18,9 +21,12 @@
 
 struct sockaddr_in si_other;
 int s;
-int slen=sizeof(si_other);
+unsigned int slen=sizeof(si_other);
 char buf[BUFLEN];
 char message[BUFLEN];
+char id = 0;
+
+char outgoingRequestBuffer[7];
 
 void die(char *s)
 {
@@ -29,11 +35,11 @@ void die(char *s)
 }
 
 int setUp(int port, char const *address) {
-	
+
 	memset((char *) &si_other, 0, sizeof(si_other));
 	si_other.sin_family = AF_INET;
 	si_other.sin_port = htons(port);
-	
+
 	if (inet_aton(address , &si_other.sin_addr) == 0) 
 	{
 		fprintf(stderr, "inet_aton() failed\n");
@@ -41,39 +47,96 @@ int setUp(int port, char const *address) {
 	}
 	return 0;
 }
+
+unsigned char * generateRequest(unsigned char * buffer) {
+	char op_code;
+	char num_ops;
+	short operand_one;
+	short operand_two = 0;
+	char msg_in[BUFLEN];
+	printf("Enter operation (+ - * / >> <<)");
+	fgets(msg_in, BUFLEN, stdin);
+	const char op_check = msg_in[0]; 
+	switch (op_check) {
+		case('+') :
+			op_code = PLUS_OP_CODE;
+			num_ops = 2;
+			break;
+		case('-') :
+			op_code = 1;
+			num_ops = 2;
+			break;
+		case('*') :
+			op_code = 2;
+			num_ops = 2;
+			break;
+		case('/') :
+			op_code = 3;
+			num_ops = 2;
+			break;
+		case('>') :
+			op_code = 4;
+			num_ops = 1;
+			break;
+		case('<') :
+			op_code = 5;
+			num_ops = 1;
+			break;
+		case('~') :
+			op_code = 6;
+			num_ops = 1;
+			break;
+		default:
+			op_code = op_check;
+			num_ops = '3';
+			break;	
+	}
+	memset(msg_in, '\0', BUFLEN);
+	printf("Enter operand_one: ");
+	fgets(msg_in, BUFLEN, stdin);
+	operand_one = atoi(msg_in);
+	if (num_ops == 2) {
+	printf("Enter operand_two: ");
+	fgets(msg_in, BUFLEN, stdin);
+	operand_two = atoi(msg_in);
+	}
+	return serialize_request(buffer, REQ_SIZE, ++id, op_code, num_ops, operand_one, operand_two);
+
+
+}
+
 void sendAndRec(){
 	while(1)
 	{
-		printf("Enter message : ");
-		fgets(message, BUFLEN, stdin);
-		
+		unsigned char reqBuffer[REQ_SIZE];
+		unsigned char * out = generateRequest(reqBuffer);
+
 		//send the message
-		if (sendto(s, message, strlen(message) , 0 , (struct sockaddr *) &si_other, slen)==-1)
+		if (sendto(s, out, REQ_SIZE , 0 , (struct sockaddr *) &si_other, slen)==-1)
 		{
 			die("sendto()");
 		}
-		
-		//receive a reply and print it
+
 		//clear the buffer by filling null, it might have previously received data
 		memset(buf,'\0', BUFLEN);
+		//receive a reply and print it
 		//try to receive some data, this is a blocking call
 		if (recvfrom(s, buf, BUFLEN, 0, (struct sockaddr *) &si_other, &slen) == -1)
 		{
 			die("recvfrom()");
 		}
-		
+
+		memset(reqBuffer, '\0', REQ_SIZE);
+
 		printf("Recieved from server: %s\n", buf);
 	}
 }
 
+
+
 int main(int argc, char const *argv[])
 {
-	//struct sockaddr_in si_other;
-	//int s;
-	//unsigned int slen=sizeof(si_other);
-	//char buf[BUFLEN];
-	//char message[BUFLEN];
-	
+
 	if(argc < 3) {
 		printf("Syntax is: \'Client [port] [server address]\'\n");
 		die("insufficient parameters");
@@ -89,7 +152,12 @@ int main(int argc, char const *argv[])
 		die("Set up failure");
 	}
 
+
 	sendAndRec();
 	close(s);
+
+	unsigned char reqBuffer[REQ_SIZE];
+	unsigned char * out = generateRequest(reqBuffer);
+	printArray(out, REQ_SIZE);
 	return 0;
 }

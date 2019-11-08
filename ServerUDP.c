@@ -9,6 +9,7 @@
 #include <netinet/in.h> 
 #include "ServerUDP.h"
 
+
 #define MAXLINE 1024 
 
 // Driver code 
@@ -19,6 +20,7 @@ struct sockaddr_in si_me, si_other;
 int s,   recv_len;
 unsigned int slen = sizeof(si_other);
 char buf[BUFLEN];
+unsigned char incoming_request_header[REQ_SIZE];
 
 void die(char *s)
 {
@@ -48,17 +50,17 @@ void sendAndRec() {
 		fflush(stdout);
 
 		//try to receive some data, this is a blocking call
-		if ((recv_len = recvfrom(s, buf, BUFLEN, 0, (struct sockaddr *) &si_other, &slen)) == -1)
+		if ((recv_len = recvfrom(s, incoming_request_header, REQ_SIZE, 0, (struct sockaddr *) &si_other, &slen)) == -1)
 		{
 			die("recvfrom()");
 		}
 
 		//print details of the client/peer and the data received
 		printf("Received packet from %s:%d\n", inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));
-		printf("Data: %s\n" , buf);
+		printArray(incoming_request_header, REQ_SIZE);
 
 		//now reply the client with the same data
-		if (sendto(s, buf, recv_len, 0, (struct sockaddr*) &si_other, slen) == -1)
+		if (sendto(s, "msg recieved", recv_len, 0, (struct sockaddr*) &si_other, slen) == -1)
 		{
 			die("sendto()");
 		}
