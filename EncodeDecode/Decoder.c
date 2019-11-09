@@ -1,15 +1,9 @@
 #include "Decoder.h"
-
-
 int deserialize_int(unsigned char * buffer, int loc) {
-	int value = 0;
-	int i = loc;
-	int shift_value = 24;
-	while(shift_value >= 0) {
-		value = buffer[i] << shift_value;	
-		++i;
-		shift_value -= 8;
-	}
+	int value = buffer[loc] << 24;
+	value += buffer[loc+1] << 16;
+	value += buffer[loc+2] << 8;
+	value += buffer[loc+3];
 	return value;
 }
 short deserialize_shr(unsigned char * buffer, int loc) {
@@ -23,7 +17,7 @@ char deserialize_char(unsigned char * buffer, int loc) {
 	return ret;
 }	
 
-char * deserialize_substr(unsigned char * buffer, int begin, int end) {
+/*char * deserialize_substr(unsigned char * buffer, int begin, int end) {
 	char * substring = malloc(end - begin + 1);
 	int i=begin, loc = 0;
 	while(i < end) {
@@ -34,7 +28,9 @@ char * deserialize_substr(unsigned char * buffer, int begin, int end) {
 	substring[end - begin] = '\0';
 	return substring;
 
-}	
+}*/	
+
+
 
 int deserialize_request(unsigned char * buffer, char tml, char id, char op_code, char num_ops, short operand_one, short operand_two) {
 	tml = deserialize_char(buffer, 0);

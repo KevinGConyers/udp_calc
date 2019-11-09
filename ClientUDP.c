@@ -26,8 +26,6 @@ char buf[BUFLEN];
 char message[BUFLEN];
 char id = 0;
 
-char outgoingRequestBuffer[7];
-
 void die(char *s)
 {
 	perror(s);
@@ -54,7 +52,7 @@ unsigned char * generateRequest(unsigned char * buffer) {
 	short operand_one;
 	short operand_two = 0;
 	char msg_in[BUFLEN];
-	printf("Enter operation (+ - * / >> <<)");
+	printf("Enter operation (+ - * / >> << ~)");
 	fgets(msg_in, BUFLEN, stdin);
 	const char op_check = msg_in[0]; 
 	switch (op_check) {
@@ -110,6 +108,7 @@ void sendAndRec(){
 	{
 		unsigned char reqBuffer[REQ_SIZE];
 		unsigned char * out = generateRequest(reqBuffer);
+		unsigned char incoming_response_header[RES_SIZE];
 
 		//send the message
 		if (sendto(s, out, REQ_SIZE , 0 , (struct sockaddr *) &si_other, slen)==-1)
@@ -121,14 +120,21 @@ void sendAndRec(){
 		memset(buf,'\0', BUFLEN);
 		//receive a reply and print it
 		//try to receive some data, this is a blocking call
-		if (recvfrom(s, buf, BUFLEN, 0, (struct sockaddr *) &si_other, &slen) == -1)
+		if (recvfrom(s, incoming_response_header, RES_SIZE, 0, (struct sockaddr *) &si_other, &slen) == -1)
 		{
 			die("recvfrom()");
 		}
+		int answer = deserialize_int(incoming_response_header, 3);
+		char idIn = deserialize_char(incoming_response_header, 1);
 
 		memset(reqBuffer, '\0', REQ_SIZE);
 
-		printf("Recieved from server: %s\n", buf);
+		printf("Header recieved from server: ");
+		printArray(incoming_response_header, RES_SIZE);
+		printf("\n");
+
+
+		printf("Answer for request with Id %i: %i\n", idIn, answer);
 	}
 }
 
@@ -156,8 +162,17 @@ int main(int argc, char const *argv[])
 	sendAndRec();
 	close(s);
 
-	unsigned char reqBuffer[REQ_SIZE];
-	unsigned char * out = generateRequest(reqBuffer);
-	printArray(out, REQ_SIZE);
+	/*while(1) {
+	unsigned char intBuffer[4];
+	printf("enter val: ");
+	fgets(message, BUFLEN, stdin);
+	int value = atoi(message);
+	printf("value: %i\n", value);
+	unsigned char * out = serialize_int(intBuffer, value);
+	printArray(out, 4);
+	int recieInt = deserialize_int(out, 0);
+	printf("Got: %i\n", recieInt);
+	}*/
+	
 	return 0;
 }

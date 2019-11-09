@@ -20,7 +20,6 @@ struct sockaddr_in si_me, si_other;
 int s,   recv_len;
 unsigned int slen = sizeof(si_other);
 char buf[BUFLEN];
-unsigned char incoming_request_header[REQ_SIZE];
 
 void die(char *s)
 {
@@ -42,6 +41,39 @@ int setUp(int port) {
 	}
 	return 0;
 }
+int performCalculation(unsigned char * buffer) {
+	int ret = 0;
+	short operand_one = deserialize_shr(buffer, 4);
+	short operand_two = deserialize_shr(buffer, 6);
+	const char operation = deserialize_char(buffer, 2);
+	printf("Operation Code: %i\n", operation);
+	printf("Operand One: %i\n", operand_one);
+	printf("Operand Two: %i\n", operand_two);
+	switch (operation) {
+		case (0) :
+			ret = operand_one + operand_two;
+			break;
+		case (1) :
+			ret = operand_one - operand_two;
+			break;
+		case (2) :
+			ret = operand_one * operand_two;
+			break;
+		case (3) :
+			ret = operand_one / operand_two;
+			break;
+		case (4) :
+			ret = operand_one >> 1;
+			 break;
+		case (5) :
+			 ret = operand_one << 1;
+			 break;
+		case (6) :
+			 ret = ~operand_one;
+	}
+	printf("Answer: %i\n", ret);
+	return ret;
+}
 
 void sendAndRec() {
 	while(1)
@@ -49,18 +81,28 @@ void sendAndRec() {
 		printf("Waiting for data...");
 		fflush(stdout);
 
+		unsigned char incoming_request_header[REQ_SIZE];
+		unsigned char outgoing_response_header[RES_SIZE];
 		//try to receive some data, this is a blocking call
 		if ((recv_len = recvfrom(s, incoming_request_header, REQ_SIZE, 0, (struct sockaddr *) &si_other, &slen)) == -1)
 		{
 			die("recvfrom()");
 		}
-
+		int answer = performCalculation(incoming_request_header);
+		char err0 = 0;
+		char size = deserialize_char(incoming_request_header, 0);
+		char id = deserialize_char(incoming_request_header, 1);
+		if (size != sizeof(incoming_request_header)) {
+			err0 = 127;
+		}
+		unsigned char * outgoing_answer = serialize_response(outgoing_response_header, RES_SIZE, id, err0, answer);
 		//print details of the client/peer and the data received
-		printf("Received packet from %s:%d\n", inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));
-		printArray(incoming_request_header, REQ_SIZE);
+		
+		printf("Sending Out this packet: ");
+		printArray(outgoing_response_header, RES_SIZE);
 
 		//now reply the client with the same data
-		if (sendto(s, "msg recieved", recv_len, 0, (struct sockaddr*) &si_other, slen) == -1)
+		if (sendto(s, outgoing_answer, RES_SIZE, 0, (struct sockaddr*) &si_other, slen) == -1)
 		{
 			die("sendto()");
 		}

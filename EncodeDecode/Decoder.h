@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
 int deserialize_int(unsigned char * buffer, int loc); 
-short deserialize_shrt(unsigned char * buffer, int loc);
+short deserialize_shr(unsigned char * buffer, int loc);
 char deserialize_char(unsigned char * buffer, int loc);
 char * deserialize_substr(unsigned char * buffer, int begin, int end);
 

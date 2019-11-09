@@ -1,4 +1,7 @@
 #include "../Encoder.c"
+#include "../Encoder.h"
+#include "../Decoder.c"
+#include "../Decoder.h"
 #include <stdio.h>
 #include <iostream>
 #include <gmock/gmock.h>
@@ -6,8 +9,10 @@ using ::testing::Eq;
 #include <gtest/gtest.h>
 using ::testing::Test;
 
-char expArray[8];
-char testArray[8];
+unsigned char expArray[4];
+unsigned char testArray[4];
+int expectedAns;
+int testAns;
 class EncoderTestSuit : public testing::Test
 {	
 
@@ -52,5 +57,19 @@ TEST_F(EncoderTestSuit, check_request_encoding) {
 
 
 }*/
+TEST_F(EncoderTestSuit, check_integer_encoding_value_is_one) {
+	int val = 1;
+	unsigned char * tmp = serialize_int(testArray, val);
+	expArray[0] = 0;
+	expArray[1] = 0;
+	expArray[2] = 0;
+	expArray[3] = 1;
+	ASSERT_EQ(expArray[0], tmp[0]);
+	ASSERT_EQ(expArray[1], tmp[1]);
+	ASSERT_EQ(expArray[2] , tmp[2]);
+	ASSERT_EQ(expArray[3], tmp[3]);
+	ASSERT_EQ(val, deserialize_int(tmp, 0));
+	
+}
 
 
