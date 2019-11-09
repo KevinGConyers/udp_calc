@@ -1,4 +1,4 @@
-##COMPILATION INSTRUCTIONS
+## COMPILATION INSTRUCTIONS
 
 To compile and run the UDP calculation client and server, follow these instructions.
 
@@ -10,7 +10,7 @@ To compile and run the UDP calculation client and server, follow these instructi
 
 And then just use the calculation as outlined in the project description.
 
-#notes:
+# notes:
 
 ***server address*** **MUST** be in dotted decimal notation (i.e. 127.0.0.1 for localhost).
 
