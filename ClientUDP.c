@@ -144,7 +144,7 @@ int main(int argc, char const *argv[])
 {
 
 	if(argc < 3) {
-		printf("Syntax is: \'Client [port] [server address]\'\n");
+		printf("Syntax is: \'Client [server address] [port]\'\n");
 		die("insufficient parameters");
 	}
 
@@ -153,7 +153,7 @@ int main(int argc, char const *argv[])
 		die("socket creation failure");
 	}
 
-	if (setUp(atoi(argv[1]), argv[2]) < 0) {
+	if (setUp(atoi(argv[2]), argv[1]) < 0) {
 		printf("failed to set up");
 		die("Set up failure");
 	}
