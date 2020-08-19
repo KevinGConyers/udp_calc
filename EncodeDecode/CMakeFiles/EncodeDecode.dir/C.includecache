@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/kevin/Projects/C/UDP_CALC/EncodeDecode/Decoder.c
+Decoder.h
+/home/kevin/Projects/C/UDP_CALC/EncodeDecode/Decoder.h
+
+/home/kevin/Projects/C/UDP_CALC/EncodeDecode/Decoder.h
+stdlib.h
+-
+
+/home/kevin/Projects/C/UDP_CALC/EncodeDecode/Encoder.c
+Encoder.h
+/home/kevin/Projects/C/UDP_CALC/EncodeDecode/Encoder.h
+stdio.h
+-
+limits.h
+-
+
+/home/kevin/Projects/C/UDP_CALC/EncodeDecode/Encoder.h
+

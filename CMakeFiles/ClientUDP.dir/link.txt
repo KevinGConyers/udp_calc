@@ -1,0 +1,1 @@
+/usr/bin/cc -Wall -Wall -rdynamic CMakeFiles/ClientUDP.dir/ClientUDP.c.o -o ClientUDP  EncodeDecode/libEncodeDecode.a 

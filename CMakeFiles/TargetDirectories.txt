@@ -1,0 +1,9 @@
+/home/kevin/Projects/C/UDP_CALC/CMakeFiles/rebuild_cache.dir
+/home/kevin/Projects/C/UDP_CALC/CMakeFiles/edit_cache.dir
+/home/kevin/Projects/C/UDP_CALC/CMakeFiles/test.dir
+/home/kevin/Projects/C/UDP_CALC/CMakeFiles/ClientUDP.dir
+/home/kevin/Projects/C/UDP_CALC/CMakeFiles/ServerUDP.dir
+/home/kevin/Projects/C/UDP_CALC/EncodeDecode/CMakeFiles/rebuild_cache.dir
+/home/kevin/Projects/C/UDP_CALC/EncodeDecode/CMakeFiles/edit_cache.dir
+/home/kevin/Projects/C/UDP_CALC/EncodeDecode/CMakeFiles/test.dir
+/home/kevin/Projects/C/UDP_CALC/EncodeDecode/CMakeFiles/EncodeDecode.dir

@@ -1,0 +1,2 @@
+/usr/bin/ar qc libEncodeDecode.a CMakeFiles/EncodeDecode.dir/Encoder.c.o CMakeFiles/EncodeDecode.dir/Decoder.c.o
+/usr/bin/ranlib libEncodeDecode.a
